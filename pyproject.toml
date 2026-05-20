@@ -54,4 +54,4 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-"mosaico_alchemy" = "mosaico_alchemy.cli:run_alchemy_cli"
+"mosaico-alchemy" = "mosaico_alchemy.cli:run_alchemy_cli"

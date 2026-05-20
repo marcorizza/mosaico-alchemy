@@ -17,18 +17,38 @@ from mosaico_alchemy.manipulation.datasets.reassemble import ReassemblePlugin
 
 class DatasetRegistry:
     """
-    Stores dataset plugins and resolves them by identifier or compatible root.
+    Singleton registry that stores dataset plugins and resolves them by identifier
+    or compatible root. Because only one instance ever exists, plugins registered
+    from any part of the codebase (CLI, runner, tests) are always visible everywhere
+    without passing the registry around explicitly.
 
-    The same registry supports two workflows:
+    The registry supports two workflows:
     - explicit selection, where the CLI already knows the desired `dataset_id`;
     - auto-detection, where the runner asks each plugin whether it supports a root.
-
     Keeping both paths in one place makes plugin resolution predictable and easier
     to extend in open-source deployments.
     """
 
+    _instance: "DatasetRegistry | None" = None
+
+    def __new__(cls) -> "DatasetRegistry":
+        """
+        Returns the singleton instance, creating it on the first call.
+
+        Subsequent calls to `DatasetRegistry()` return the same object without
+        re-running `__init__`, so the plugin list is never reset.
+        """
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
     def __init__(self) -> None:
-        """Initializes an empty dataset plugin registry."""
+        """
+        Initialises the plugin list on the first instantiation only.
+        """
+
+        if hasattr(self, "_plugins"):  # already initialised — skip
+            return
 
         self._plugins: list[DatasetPlugin] = []
         """
@@ -105,7 +125,7 @@ class DatasetRegistry:
             raise ValueError(f"No dataset plugin found for {root}")
 
 
-def build_default_dataset_registry() -> DatasetRegistry:
+def _build_default_dataset_registry() -> DatasetRegistry:
     """
     Builds the dataset registry shipped with the manipulation pack.
 
@@ -122,3 +142,8 @@ def build_default_dataset_registry() -> DatasetRegistry:
     registry.register(MMLPlugin())
     registry.register(DROIDPlugin())
     return registry
+
+
+# Build the default dataset registry.
+# This is called once when the module is first imported; subsequent imports are no-ops.
+_build_default_dataset_registry()

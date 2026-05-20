@@ -26,7 +26,6 @@ from mosaico_alchemy.manipulation.contracts import (
 )
 from mosaico_alchemy.manipulation.datasets import (
     DatasetRegistry,
-    build_default_dataset_registry,
 )
 from mosaico_alchemy.manipulation.runner.executors.file_executor import (
     FileSequenceExecutor,
@@ -64,7 +63,7 @@ class ManipulationRunner:
     ) -> None:
         """Initializes the runner with shared executors and plugin registry state."""
         self.console = console or Console(stderr=True)
-        self.dataset_registry = dataset_registry or build_default_dataset_registry()
+        self.dataset_registry = dataset_registry or DatasetRegistry()
         self._stop_requested = stop_requested or (lambda: False)
         self._file_executor = FileSequenceExecutor(
             self.console,

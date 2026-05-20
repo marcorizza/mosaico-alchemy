@@ -15,7 +15,7 @@ from typing import List, Type
 
 from mosaicolabs import SequenceWriter, TopicLevelErrorPolicy, TopicWriter
 
-from mosaico_alchemy.manipulation.adapters import build_default_adapter_registry
+from mosaico_alchemy.manipulation.adapters import AdapterRegistry
 from mosaico_alchemy.manipulation.adapters.base import BaseAdapter
 from mosaico_alchemy.manipulation.contracts import (
     SequenceDescriptor,
@@ -47,7 +47,7 @@ class TopicIngester:
 
     def __init__(self, write_mode: WriteMode = "sync") -> None:
         """Initializes the ingester with the built-in adapter registry and write mode."""
-        self.adapter_registry = build_default_adapter_registry()
+        self.adapter_registry = AdapterRegistry()
         self._write_mode = write_mode
 
     def prepare_topic_bindings(

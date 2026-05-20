@@ -54,10 +54,10 @@ The top-level CLI exposes the *alchemies* bundled in the repository:
 
 ```bash
 # Show the global dispatcher help
-mosaico_alchemy -h
+mosaico-alchemy -h
 
 # E.g.: Show the manipulation alchemy usage
-mosaico_alchemy manipulation -h
+mosaico-alchemy manipulation -h
 ```
 
 ## Quick Start
@@ -65,7 +65,7 @@ mosaico_alchemy manipulation -h
 As an example Run the manipulation alchemy against one or more dataset roots:
 
 ```bash
-mosaico_alchemy manipulation \
+mosaico-alchemy manipulation \
   --datasets /path/to/reassemble /path/to/droid \
   --host localhost \
   --port 6726 \

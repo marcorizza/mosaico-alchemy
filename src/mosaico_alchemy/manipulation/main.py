@@ -23,7 +23,6 @@ from mosaico_alchemy.configs import MOSAICO_HOST, MOSAICO_PORT
 from mosaico_alchemy.manipulation.contracts import DatasetPlugin, WriteMode
 from mosaico_alchemy.manipulation.datasets import (
     DatasetRegistry,
-    build_default_dataset_registry,
 )
 from mosaico_alchemy.manipulation.runner.reporters.reports import (
     DatasetIngestionReport,
@@ -286,7 +285,7 @@ def run_pipeline(args: argparse.Namespace) -> int:
     """
     console = Console(stderr=True)
     configure_logging(args.log_level, console, log_file=args.log_file)
-    dataset_registry = build_default_dataset_registry()
+    dataset_registry = DatasetRegistry()
 
     try:
         dataset_selections = _select_dataset_plugins(
