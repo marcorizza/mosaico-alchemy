@@ -2,8 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
-[![Documentation (Mosaico Alchemy)](https://img.shields.io/badge/docs-Mosaico%20Alchemy-blue?logo=readthedocs&logoColor=white)](https://your-project.readthedocs.io)
-[![Documentation (Mosaico)](https://img.shields.io/badge/docs-Mosaico-blue?logo=readthedocs&logoColor=white&labelColor=gray)](https://docs.mosaico.dev)
+[![Documentation](https://img.shields.io/badge/docs-Alchemies-blue?logo=readthedocs&logoColor=white&labelColor=gray)](https://docs.mosaico.dev)
 
 Ingestion pipelines for public robotics datasets into [Mosaico](https://github.com/mosaico-labs/mosaico).
 
