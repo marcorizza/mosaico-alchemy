@@ -100,7 +100,10 @@ from mosaico_alchemy.manipulation.adapters.reassemble.vision.video_frame import 
 
 class AdapterRegistry:
     """
-    Stores the adapter classes that can be resolved during ingestion.
+    Singleton registry that stores the adapter classes that can be resolved
+    during ingestion. Because only one instance ever exists, adapters registered
+    from any part of the codebase (plugins, tests, user extensions) are always
+    visible everywhere without passing the registry around explicitly.
 
     The registry exists to decouple dataset descriptors from concrete imports. A
     plugin can reference `reassemble.pose` or `fractal_rt1.video_frame` by id,
@@ -108,8 +111,28 @@ class AdapterRegistry:
     dataset family that produced it.
     """
 
+    _instance: "AdapterRegistry | None" = None
+
+    def __new__(cls) -> "AdapterRegistry":
+        """
+        Returns the singleton instance, creating it on the first call.
+
+        Subsequent calls to `AdapterRegistry()` return the same object without
+        re-running `__init__`, so the adapter map is never reset.
+        """
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
     def __init__(self) -> None:
-        """Initializes an empty adapter registry."""
+        """
+        Initialises the adapter map on the first instantiation only.
+
+        Subsequent calls to `AdapterRegistry()` return the same object without
+        re-running `__init__`, so the adapter list is never reset.
+        """
+        if hasattr(self, "_adapters"):
+            return
         self._adapters: dict[str, type[BaseAdapter]] = {}
 
     def register(self, adapter_cls: type[BaseAdapter]) -> None:
@@ -150,11 +173,14 @@ class AdapterRegistry:
 
         Returning a copy keeps registry ownership explicit and avoids accidental
         mutation by callers that only need to inspect available adapters.
+
+        Returns:
+            Copy of the adapter mapping.
         """
         return dict(self._adapters)
 
 
-def build_default_adapter_registry() -> AdapterRegistry:
+def _build_default_adapter_registry() -> AdapterRegistry:
     """
     Builds the adapter registry shipped with the manipulation pack.
 
@@ -197,3 +223,8 @@ def build_default_adapter_registry() -> AdapterRegistry:
     registry.register(DroidFloating64Adapter)
     registry.register(DroidInteger64Adapter)
     return registry
+
+
+# Build the default adapter registry.
+# This is called once when the module is first imported; subsequent imports are no-ops.
+_build_default_adapter_registry()
