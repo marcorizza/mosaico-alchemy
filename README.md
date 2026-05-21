@@ -1,46 +1,39 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/mosaico-labs/mosaico/main/logo/mono_white.svg" width="300" alt="Mosaico Logo">
-</p>
-
 # Mosaico Alchemy
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
-[![Documentation (Mosaico Alchemy)](https://img.shields.io/badge/docs-Mosaico%20Alchemy-blue?logo=readthedocs&logoColor=white)](https://your-project.readthedocs.io)
-[![Documentation (Mosaico)](https://img.shields.io/badge/docs-Mosaico-blue?logo=readthedocs&logoColor=white&labelColor=gray)](https://docs.mosaico.dev)
+[![Documentation](https://img.shields.io/badge/docs-Alchemies-blue?logo=readthedocs&logoColor=white&labelColor=gray)](https://docs.mosaico.dev)
 
-A collection of ready-to-use ingestion pipelines showcasing the import of public datasets into the [Mosaico Data Platform](https://github.com/mosaico-labs/mosaico).
+Ingestion pipelines for public robotics datasets into [Mosaico](https://github.com/mosaico-labs/mosaico).
 
-## Overview
+In alchemy, transmutation requires understanding the true nature of what you're working with.
+The same applies here: before a dataset can be useful, it needs to be understood, broken down,
+and rebuilt into something the platform can actually work with.
 
-The **Mosaico Alchemy** repository provides ready-to-use ingestion pipelines, showing how datatest can be ingested into the **Mosaico Data Platform**.
+That's what this repository does.
 
-The project is organized in *Packs*, where each *Pack* is focused on a specific use-case (like **Robotic Manipulation**) and translates heterogeneous dataset formats into the same ontology used by the [**Mosaico SDK**](https://docs.mosaico.dev/SDK/), so you can ingest once and query robotics data through one consistent semantic model.
+## What it is
 
-## Key Features
+`mosaico-alchemy` is a collection of ingestion pipelines, called *alchemies*, that take
+heterogeneous public datasets (HDF5, TFDS, Parquet, ROS bags) and transmute them into
+Mosaico Sequences using the standard SDK ontology.
 
-* **Pack-Oriented CLI**: A single `mosaico_alchemy` entrypoint dispatches execution to the selected *alchemy*.
-* **Unified Ontology Mapping**: Normalizes different source formats (like HDF5, TFDS, Parquet/MP4, and ROS bag) into **Mosaico Sequences and Ontology Models**.
-* **Multiple Execution Backends**: Supports both file-backed ingestion flows and rosbag-based replay flows.
-* **Extensible Architecture**: New datasets can be added through registries for dataset plugins and adapters.
-* **Rich Terminal Reporting**: Includes progress summaries, dataset/run reports, and optional log-file output.
+Pipelines are organized into **packs**, each covering a specific domain. The goal is that
+once a dataset is ingested through an alchemy, you can query and stream it the same way you
+would any other data in the platform, regardless of where it originally came from.
 
 ## Available Packs
 
-| Pack | Description | Status |
-|:--------|:------------|:-------|
-| [Manipulation](src/mosaico_alchemy/manipulation/) | Built-in Manipulation Support: Ships with ingestion plugins for public datatets like [`reassemble`](https://tuwien-asl.github.io/REASSEMBLE_page/), [`fractal_rt1`](https://research.google/blog/rt-1-robotics-transformer-for-real-world-control-at-scale/), [`droid`](https://huggingface.co/datasets/lerobot/droid_1.0.1), and [`mml`](https://zenodo.org/records/6372438). | ✅ Ready |
+| Pack | Datasets | Status |
+|:-----|:---------|:-------|
+| [Manipulation](src/mosaico_alchemy/manipulation/) | [`reassemble`](https://tuwien-asl.github.io/REASSEMBLE_page/), [`fractal_rt1`](https://research.google/blog/rt-1-robotics-transformer-for-real-world-control-at-scale/), [`droid`](https://huggingface.co/datasets/lerobot/droid_1.0.1), [`mml`](https://zenodo.org/records/6372438) | ✅ Ready |
 
 ## Installation
 
-### Mosaico
+You need a running Mosaico instance. The fastest way to get one is the
+[container setup in the docs](https://docs.mosaico.dev/daemon/install/).
 
-Before running any mosaico service via SDK (included the *alchemy-packs* in this project), ensure your **Mosaico Infrastructure** is active and running. 
-The easiest way to start is using the provided **[Quick Start environment via Containers](https://docs.mosaico.dev/daemon/install/)**.
-
-### Mosaico-Alchemy
-
-Clone this repository, then install and run the project with **Poetry**:
+Then clone this repo and install with Poetry:
 
 ```bash
 cd mosaico-alchemy
@@ -48,23 +41,15 @@ poetry install
 eval $(poetry env activate)
 ```
 
-*Note: Requires Python 3.10 or higher.*
+Requires Python 3.10+.
 
-The top-level CLI exposes the *alchemies* bundled in the repository:
+## Usage
 
 ```bash
-# Show the global dispatcher help
+# list available alchemies
 mosaico-alchemy -h
 
-# E.g.: Show the manipulation alchemy usage
-mosaico-alchemy manipulation -h
-```
-
-## Quick Start
-
-As an example Run the manipulation alchemy against one or more dataset roots:
-
-```bash
+# run the manipulation alchemy
 mosaico-alchemy manipulation \
   --datasets /path/to/reassemble /path/to/droid \
   --host localhost \
@@ -72,8 +57,12 @@ mosaico-alchemy manipulation \
   --write-mode sync
 ```
 
-The CLI currently requires an **interactive terminal**. For each dataset root, it prompts you to choose one of the registered plugins or skip the dataset entirely.
+The CLI is interactive: for each dataset root it will ask which plugin to use,
+or let you skip it entirely.
 
-## License
+## Extending
 
-This project is licensed under the **Apache License v2.0 (Apache-2.0)**. See the `LICENSE` file for more details.
+New datasets can be added by registering a plugin and the relevant adapters.
+The architecture is intentionally open. 
+
+Equivalent exchange applies, you put in the work to describe your data, you get full platform compatibility out.
